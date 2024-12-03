@@ -138,13 +138,13 @@ const Form = () => {
                                 }`}
                         >
                             {currentQuestion?.title && (
-                                <h1 className="text-[#206396] text-3xl font-semibold mb-8">
+                                <h1 className="text-[#206396] md:text-3xl text-xl font-semibold mb-8">
                                     {currentQuestion.title}
                                 </h1>
                             )}
 
                             {currentQuestion?.question && (
-                                <h2 className="text-[#206396] text-3xl font-semibold mb-6">
+                                <h2 className="text-[#206396] md:text-3xl text-xl font-semibold mb-6">
                                     {currentQuestion.question}
                                 </h2>
                             )}
@@ -160,7 +160,7 @@ const Form = () => {
                                             key={index}
                                             onClick={() => handleOptionSelect(option.text, option.nextQuestionId)}
                                             className={cn(
-                                                "block text-xl w-full text-left py-2 px-4 rounded-sm transition-transform duration-300 ease-in-out mb-3 font-medium",
+                                                "block md:text-xl text-sm w-full text-left py-2 px-4 rounded-sm transition-transform duration-300 ease-in-out mb-3 font-medium",
                                                 {
                                                     "bg-gray-200 text-[#206396] hover:bg-[#206396] hover:text-white hover:scale-105":
                                                         currentQuestionId !== 5 || !selectedOptions.includes(option.text),
@@ -204,19 +204,19 @@ const Form = () => {
                         className={`inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
                             }`}
                     >
-                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
                             {currentQuestion.text1}
                         </h1>
 
-                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
                             {currentQuestion.text2}
                         </h1>
 
-                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
                             {currentQuestion.text3}
                         </h1>
 
-                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
                             {currentQuestion.text4}
                         </h1>
 
