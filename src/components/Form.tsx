@@ -1,7 +1,16 @@
 import { cn } from "@/lib/utils";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import PhoneInputWithCountrySelect from "react-phone-number-input";
 import PulsatingButton from "./ui/pulsating-button";
 import ShineBorder from './ui/shine-border';
+
+
+type UserDetails = {
+    name: string;
+    email: string;
+    phone: string;
+    countryCode: string; 
+};
 
 const Form = () => {
     const questions = [
@@ -85,32 +94,48 @@ const Form = () => {
     const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    
+    const defaultUserDetails: UserDetails = {
+        name: '',
+        email: '',
+        phone: '',
+        countryCode: 'BD',
+      };
+    
+     const [userDetails, setUserDetails] = useState<UserDetails>(defaultUserDetails);
 
-    console.log(selectedTime);
+    const fetchIPLocation = async () => {
+        try {
+            const response = await fetch(
+                "https://thingproxy.freeboard.io/fetch/https://ipapi.co/json/"
+            );
+            const data = await response.json();
+            setUserDetails((prev) => ({ ...prev, countryCode: data.country_code }));
+        } catch (error) {
+            console.error("Error fetching IP location. Defaulting to DE.", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchIPLocation();
+    }, []);
 
 
     const handleOptionSelect = (optionText: string, nextQuestionId: number | null) => {
         if (currentQuestionId === 5) {
-            // Multiple selection logic for question 5
             setSelectedOptions((prevSelected) =>
                 prevSelected.includes(optionText)
                     ? prevSelected.filter((item) => item !== optionText)
                     : [...prevSelected, optionText]
             );
         } else if (currentQuestionId === 6) {
-            // Store selected time and complete the quiz
             setSelectedTime(optionText);
-            alert(`Selected time: ${optionText}`);
-            setCurrentQuestionId(1); // Reset or navigate as needed
         } else {
-            // Default single-selection logic
             if (!nextQuestionId) {
                 alert('Quiz Complete!');
                 setCurrentQuestionId(1); // Reset quiz
                 return;
             }
-
-            // Transition logic
             setIsTransitioning(true);
             setTimeout(() => {
                 setCurrentQuestionId(nextQuestionId);
@@ -119,20 +144,33 @@ const Form = () => {
         }
     };
 
-
+    const handleSubmit = () => {
+        if (!userDetails.name || !userDetails.email || !userDetails.phone) {
+            alert('Bitte füllen Sie alle Felder aus.');
+            return;
+        }
+        console.log({
+            selectedOptions,
+            selectedTime,
+            userDetails,
+        });
+        alert('Danke für Ihre Antworten!');
+        setCurrentQuestionId(1); // Reset quiz
+        setSelectedOptions([]);
+        setSelectedTime(null);
+        setUserDetails({ name: '', email: '', phone: '', countryCode: 'BD' });
+    };
 
     const currentQuestion = questions.find((q) => q.id === currentQuestionId);
 
-
     return (
         <>
-            {(!currentQuestion?.image) &&
+            {!selectedTime && (!currentQuestion?.image) && (
                 <ShineBorder
                     className="mx-auto px-[13%] py-[8%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-2xl"
                     color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                 >
                     <div className="text-center">
-                        {/* Question */}
                         <div
                             className={`md:w-[500px] inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
                                 }`}
@@ -193,7 +231,74 @@ const Form = () => {
                             )}
                         </div>
                     </div>
-                </ShineBorder >}
+                </ShineBorder>
+            )}
+
+            {selectedTime && (
+                <ShineBorder
+                    className="mx-auto px-[13%] py-[8%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-2xl"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                    <div className="text-center">
+                        <h1 className="text-[#206396] md:text-3xl text-xl font-semibold mb-6">
+                            Glückwunsch! Du passt super in unser Praxisteam! 🎉
+                        </h1>
+                        <h5 className="text-xl pb-4">Nun würden wir Dich gern unverbindlich kennenlernen:</h5>
+                        <h5 className="text-xl pb-8">Wie können wir Dich am besten erreichen?</h5>
+
+                        <form
+                            className="space-y-4"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSubmit();
+                            }}
+                        >
+                            <input
+                                type="text"
+                                placeholder="👋 Dein Voller Name *"
+                                value={userDetails.name}
+                                onChange={(e) =>
+                                    setUserDetails({ ...userDetails, name: e.target.value })
+                                }
+                                className="w-full px-4 py-2 border rounded-sm"
+                            />
+                            <input
+                                type="email"
+                                placeholder="📧 Deine E-Mail Adresse *"
+                                value={userDetails.email}
+                                onChange={(e) =>
+                                    setUserDetails({ ...userDetails, email: e.target.value })
+                                }
+                                className="w-full px-4 py-2 border rounded-sm"
+                            />
+
+                            <PhoneInputWithCountrySelect
+                                international
+                                defaultCountry={userDetails.countryCode}
+                                value={userDetails.phone}
+                                onChange={(phone) =>
+                                    setUserDetails((prev) => ({ ...prev, phone }))
+                                }
+                                className="w-full px-4 py-2 border rounded-sm bg-white"
+                            />
+
+                            <h4 className="md:text-xl text-sm py-4 text-[#206396]">
+                                🔒 100% sichere Datenverbindung mit SSL. Wir respektieren Deine <br />{" "}
+                                Privatsphäre.
+                            </h4>
+
+                            <button
+                                type="submit"
+                                className="mt-10 md:text-xl text-sm"
+                            >
+                                <PulsatingButton>
+                                    Jetzt unverbindliches Kennenlerngespräch vereinbaren! 📩
+                                </PulsatingButton>
+                            </button>
+                        </form>
+                    </div>
+                </ShineBorder>
+            )}
 
             {currentQuestion?.image && (
                 <ShineBorder
@@ -230,7 +335,6 @@ const Form = () => {
                     </div>
                 </ShineBorder>
             )}
-
         </>
     );
 };
