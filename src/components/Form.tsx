@@ -184,7 +184,7 @@ const Form = () => {
                                         }
                                         setCurrentQuestionId(6);
                                     }}
-                                    className="mt-8 text-xl"
+                                    className="mt-8 md:text-xl text-sm"
                                 >
                                     <PulsatingButton>
                                         Zur letzten Frage! 🏁
