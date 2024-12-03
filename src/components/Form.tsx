@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { useState } from 'react';
-import AnimatedGradientText from './ui/animated-gradient-text';
 import PulsatingButton from "./ui/pulsating-button";
 import ShineBorder from './ui/shine-border';
 
@@ -48,7 +47,7 @@ const Form = () => {
             id: 5,
             question: '✅ Worauf freust Du Dich am meisten?',
             options: [
-                { text: '🪙  Überdurchschnittliche Vergütung zzgl. Boni', nextQuestionId: null },
+                { text: '🟡  Überdurchschnittliche Vergütung zzgl. Boni', nextQuestionId: null },
                 { text: '✈️ 30 Tage Urlaub', nextQuestionId: null },
                 { text: '🕒 3 freie Nachmittage und die Option auf eine 4 Tage Woche', nextQuestionId: null },
                 { text: '📔 Tolle Fort- und Weiterbildungsmöglichkeiten', nextQuestionId: null },
@@ -72,9 +71,9 @@ const Form = () => {
 
         {
             id: 20,
-            text1: 'Wie würdest Du Deine Deutsch-Kenntnisse in Wort und Schrift beurteilen?',
+            text1: 'Wie würdest Du Deine Deutsch-Kenntnisse in Wort und Schrift beurteilen? 🙂',
             text2: 'Für unsere offenen Positionen (m/w/d) sind gewisse Qualifikationen erforderlich.',
-            text3: 'Teile die Anzeige gerne mit Deinen Freunden, um uns bei der Suche zu unterstützen.',
+            text3: 'Teile die Anzeige gerne mit Deinen Freunden, um uns bei der Suche zu unterstützen. 📲',
             text4: 'Dein Team von der Praxis Dr. Georgiadis!',
             img: 'https://i.ibb.co.com/6tTdq22/sm2x.jpg',
             image: true
@@ -129,51 +128,44 @@ const Form = () => {
         <>
             {(!currentQuestion?.image) &&
                 <ShineBorder
-                    className="mx-auto px-[13%] py-[8%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-xl"
+                    className="mx-auto px-[13%] py-[8%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-2xl"
                     color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                 >
                     <div className="text-center">
                         {/* Question */}
                         <div
-                            className={`w-[500px] inset-0 transition-opacity duration-300 ${isTransitioning ? 'opacity-0 translate-y-20' : 'opacity-100 translate-x-0'
+                            className={`md:w-[500px] inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
                                 }`}
                         >
+                            {currentQuestion?.title && (
+                                <h1 className="text-[#206396] text-3xl font-semibold mb-8">
+                                    {currentQuestion.title}
+                                </h1>
+                            )}
 
-                            {(currentQuestion?.title) &&
-                                <AnimatedGradientText>
-                                    <h1 className={cn(
-                                        `inline animate-gradient bg-gradient-to-r from-[#206396] via-[#5cd1ee] to-[#206396] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-3xl font-semibold mb-8`,
-                                    )}>{currentQuestion?.title}</h1>
-                                </AnimatedGradientText>
-                            }
-
-                            {(currentQuestion?.question) && <AnimatedGradientText>
-                                <h2
-                                    className={cn(
-                                        `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-3xl font-semibold mb-6`,
-                                    )}
-                                >
+                            {currentQuestion?.question && (
+                                <h2 className="text-[#206396] text-3xl font-semibold mb-6">
                                     {currentQuestion.question}
                                 </h2>
-                            </AnimatedGradientText>
-                            }
+                            )}
 
-                            {
-                                (currentQuestion?.subtitle) && <h2 className="text-xl pb-4">(Mehrfachauswahl möglich)</h2>
-                            }
+                            {currentQuestion?.subtitle && (
+                                <h2 className="text-xl pb-4">(Mehrfachauswahl möglich)</h2>
+                            )}
 
-                            {currentQuestion?.options &&
+                            {currentQuestion?.options && (
                                 <div className="mt-4 space-y-3">
                                     {currentQuestion.options.map((option, index) => (
                                         <button
                                             key={index}
                                             onClick={() => handleOptionSelect(option.text, option.nextQuestionId)}
                                             className={cn(
-                                                "block text-xl w-full text-left py-2 px-4 rounded-sm transition-transform duration-300 mb-3 font-medium",
+                                                "block text-xl w-full text-left py-2 px-4 rounded-sm transition-transform duration-300 ease-in-out mb-3 font-medium",
                                                 {
                                                     "bg-gray-200 text-[#206396] hover:bg-[#206396] hover:text-white hover:scale-105":
                                                         currentQuestionId !== 5 || !selectedOptions.includes(option.text),
-                                                    "bg-[#206396] text-white scale-105": currentQuestionId === 5 && selectedOptions.includes(option.text),
+                                                    "bg-[#206396] text-white scale-105":
+                                                        currentQuestionId === 5 && selectedOptions.includes(option.text),
                                                 }
                                             )}
                                         >
@@ -181,16 +173,16 @@ const Form = () => {
                                         </button>
                                     ))}
                                 </div>
-                            }
+                            )}
 
                             {currentQuestionId === 5 && (
                                 <button
                                     onClick={() => {
                                         if (selectedOptions.length === 0) {
-                                            alert('Bitte wähle mindestens eine Option aus.'); // Alert if no options selected
+                                            alert('Bitte wähle mindestens eine Option aus.');
                                             return;
                                         }
-                                        setCurrentQuestionId(6); // Move to the next question
+                                        setCurrentQuestionId(6);
                                     }}
                                     className="mt-8 text-xl"
                                 >
@@ -203,44 +195,42 @@ const Form = () => {
                     </div>
                 </ShineBorder >}
 
-            {(currentQuestion?.image) &&
-                <ShineBorder className="mx-auto px-[10%] py-[2%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-xl text-center"
-                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}>
-                    <div className={`inset-0 transition-opacity duration-300 ${isTransitioning ? 'opacity-0 translate-y-20' : 'opacity-100 translate-x-0'}`}>
-                        <AnimatedGradientText>
-                            <h1
-                                className={cn(
-                                    `block animate-gradient bg-gradient-to-r from-[#206396] via-[#5cd1ee] to-[#206396] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-2xl font-semibold mb-8`,
-                                )}>{currentQuestion.text1}</h1>
-                        </AnimatedGradientText>
+            {currentQuestion?.image && (
+                <ShineBorder
+                    className="mx-auto px-[10%] py-[2%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-xl text-center"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                    <div
+                        className={`inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
+                            }`}
+                    >
+                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                            {currentQuestion.text1}
+                        </h1>
 
-                        <AnimatedGradientText>
-                            <h1
-                                className={cn(
-                                    `block animate-gradient bg-gradient-to-r from-[#206396] via-[#5cd1ee] to-[#206396] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-2xl font-semibold mb-8`,
-                                )}>{currentQuestion.text2}</h1>
-                        </AnimatedGradientText>
+                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                            {currentQuestion.text2}
+                        </h1>
 
-                        <AnimatedGradientText>
-                            <h1
-                                className={cn(
-                                    `block animate-gradient bg-gradient-to-r from-[#206396] via-[#5cd1ee] to-[#206396] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-2xl font-semibold mb-8`,
-                                )}>{currentQuestion.text3}</h1>
-                        </AnimatedGradientText>
-                        <AnimatedGradientText>
-                            <h1
-                                className={cn(
-                                    `block animate-gradient bg-gradient-to-r from-[#206396] via-[#5cd1ee] to-[#206396] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent text-2xl font-semibold mb-8`,
-                                )}>{currentQuestion.text4}</h1>
-                        </AnimatedGradientText>
+                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                            {currentQuestion.text3}
+                        </h1>
+
+                        <h1 className="text-[#206396] text-2xl font-semibold mb-8">
+                            {currentQuestion.text4}
+                        </h1>
 
                         <div className="flex justify-center items-center">
-                            <img className="w-3/5" src={currentQuestion.img} alt="group-image" />
+                            <img
+                                className="w-3/5"
+                                src={currentQuestion.img}
+                                alt="group-image"
+                            />
                         </div>
-
                     </div>
                 </ShineBorder>
-            }
+            )}
+
         </>
     );
 };

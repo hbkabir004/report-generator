@@ -25,7 +25,7 @@ interface ShineBorderProps {
  */
 export default function ShineBorder({
   borderRadius = 8,
-  borderWidth = 5,
+  borderWidth = 2,
   duration = 30,
   color = "#000000",
   className,
