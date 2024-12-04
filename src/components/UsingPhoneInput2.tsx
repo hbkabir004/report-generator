@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from 'react';
-import PhoneInputWithCountrySelect from "react-phone-number-input";
+import PhoneInput from "react-phone-input-2";
 import PulsatingButton from "./ui/pulsating-button";
 import ShineBorder from './ui/shine-border';
 
@@ -9,10 +9,9 @@ type UserDetails = {
     name: string;
     email: string;
     phone: string;
-    countryCode: string; 
 };
 
-const Form = () => {
+const UsingPhoneInput2 = () => {
     const questions = [
         {
             id: 1,
@@ -94,74 +93,108 @@ const Form = () => {
     const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
-    
+
     const defaultUserDetails: UserDetails = {
         name: '',
         email: '',
         phone: '',
-        countryCode: 'BD',
-      };
-    
-     const [userDetails, setUserDetails] = useState<UserDetails>(defaultUserDetails);
-
-    const fetchIPLocation = async () => {
-        try {
-            const response = await fetch(
-                "https://thingproxy.freeboard.io/fetch/https://ipapi.co/json/"
-            );
-            const data = await response.json();
-            setUserDetails((prev) => ({ ...prev, countryCode: data.country_code }));
-        } catch (error) {
-            console.error("Error fetching IP location. Defaulting to DE.", error);
-        }
     };
+
+    const [userDetails, setUserDetails] = useState<UserDetails>(defaultUserDetails);
+
+    const [value, setValue] = useState<string>('');
+    const [countryCode, setCountryCode] = useState<string>('bd');
+    const [ipAddress, setIpAddress] = useState<string>('');
 
     useEffect(() => {
-        fetchIPLocation();
+        const fetchUserIPAddress = async () => {
+            try {
+                const response = await fetch('https://api.ipify.org/?format=json');
+                const data = await response.json();
+                setIpAddress(data.ip);
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                setIpAddress('103.204.211.42'); // Default IP
+            }
+        };
+        fetchUserIPAddress();
     }, []);
 
-
-    const handleOptionSelect = (optionText: string, nextQuestionId: number | null) => {
-        if (currentQuestionId === 5) {
-            setSelectedOptions((prevSelected) =>
-                prevSelected.includes(optionText)
-                    ? prevSelected.filter((item) => item !== optionText)
-                    : [...prevSelected, optionText]
-            );
-        } else if (currentQuestionId === 6) {
-            setSelectedTime(optionText);
-        } else {
-            if (!nextQuestionId) {
-                alert('Quiz Complete!');
-                setCurrentQuestionId(1); // Reset quiz
-                return;
+    useEffect(() => {
+        const fetchUserCountry = async () => {
+            try {
+                const response = await fetch(`https://ipapi.co/${ipAddress}/json/`);
+                const data = await response.json();
+                setCountryCode(data.country_code.toLowerCase());
+            } catch (error) {
+                console.error('Error fetching geolocation data:', error);
+                setCountryCode('bd'); // Default to Bangladesh
             }
-            setIsTransitioning(true);
-            setTimeout(() => {
-                setCurrentQuestionId(nextQuestionId);
-                setIsTransitioning(false);
-            }, 300);
+        };
+        if (ipAddress) {
+            fetchUserCountry();
         }
-    };
+    }, [ipAddress]);
 
-    const handleSubmit = () => {
-        if (!userDetails.name || !userDetails.email || !userDetails.phone) {
-            alert('Bitte füllen Sie alle Felder aus.');
-            return;
-        }
-        console.log({
-            selectedOptions,
-            selectedTime,
-            userDetails,
-        });
-        alert('Danke für Ihre Antworten!');
-        setCurrentQuestionId(1); // Reset quiz
-        setSelectedOptions([]);
-        setSelectedTime(null);
-        setUserDetails({ name: '', email: '', phone: '', countryCode: 'BD' });
-    };
+     // Extract questions with IDs 1 to 4
+     const extractedQuestions = questions
+     .filter((q) => q.id >= 1 && q.id <= 4)
+     .map((q) => ({
+         id: q.id,
+         question: q.question,
+         options: q.options,
+     }));
 
-    const currentQuestion = questions.find((q) => q.id === currentQuestionId);
+ const handleOptionSelect = (optionText: string, nextQuestionId: number | null) => {
+     if (currentQuestionId === 5) {
+         setSelectedOptions((prevSelected) =>
+             prevSelected.includes(optionText)
+                 ? prevSelected.filter((item) => item !== optionText)
+                 : [...prevSelected, optionText]
+         );
+     } else if (currentQuestionId === 6) {
+         setSelectedTime(optionText);
+     } else {
+         if (!nextQuestionId) {
+             alert('Quiz Complete!');
+             setCurrentQuestionId(1); // Reset quiz
+             return;
+         }
+         setIsTransitioning(true);
+         setTimeout(() => {
+             setCurrentQuestionId(nextQuestionId);
+             setIsTransitioning(false);
+         }, 300);
+     }
+ };
+
+ const handleSubmit = () => {
+     if (!userDetails.name || !userDetails.email || !userDetails.phone) {
+         alert('Bitte füllen Sie alle Felder aus.');
+         return;
+     }
+
+     // Merging data
+     const formData = {
+         ...selectedOptions,
+         selectedTime,
+         ...userDetails,
+         ...extractedQuestions,
+     };
+
+     console.log({formData});
+     alert('Danke für Ihre Antworten!');
+
+     // Reset quiz
+     setCurrentQuestionId(1);
+     setSelectedOptions([]);
+     setSelectedTime(null);
+     setUserDetails(defaultUserDetails);
+ };
+
+ const currentQuestion = questions.find((q) => q.id === currentQuestionId);
+
+ console.log({userDetails});
 
     return (
         <>
@@ -272,14 +305,13 @@ const Form = () => {
                                 className="w-full px-4 py-2 border rounded-sm"
                             />
 
-                            <PhoneInputWithCountrySelect
-                                international
-                                defaultCountry={userDetails.countryCode}
-                                value={userDetails.phone}
-                                onChange={(phone) =>
-                                    setUserDetails((prev) => ({ ...prev, phone }))
-                                }
-                                className="w-full px-4 py-2 border rounded-sm bg-white"
+
+                            <PhoneInput
+                                country={countryCode}
+                                value={value}
+                                onChange={(phone) => setValue(phone)}
+                                inputClass="input-phone-number"
+                                placeholder="Enter your phone number"
                             />
 
                             <h4 className="md:text-xl text-sm py-4 text-[#206396]">
@@ -339,4 +371,4 @@ const Form = () => {
     );
 };
 
-export default Form;
+export default UsingPhoneInput2;
