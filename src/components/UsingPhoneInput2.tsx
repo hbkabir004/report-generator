@@ -74,9 +74,23 @@ const UsingPhoneInput2 = () => {
             ],
             title: 'Fast geschafft: Letzte Frage!'
         },
+        {
+            id: 10,
+            title: 'Vielen Dank für Deine Bewerbung. Wir freuen uns darauf Dich kennenzulernen.',
+            text1: 'So geht es jetzt weiter:',
+            text2: 'Wir sehen uns Deine Bewerbung an und melden uns innerhalb der nächsten 48 Stunden telefonisch bei Dir.',
+            text3: 'Speicher Dir dafür gerne schon einmal die folgenden Nummern ein, denn unter einer der drei werden wir Dich kontaktieren:',
+            text4: '+49 151 51589830',
+            text5: '+49 151 25006663',
+            text6: '+49 160 96703175',
+            text7: 'Gemeinsam vereinbaren wir einen Termin für ein unverbindliches Kennenlerngespräch.',
+            text8: 'Beim Kennenlernen kannst uns alle Fragen stellen, die Du gerne beantwortet haben möchtest.',
+            text9: 'Deine Ansprechpartnerin:',
+            text10: 'Jasemin Bergmann',
+            img: 'https://i.ibb.co.com/6tTdq22/sm2x.jpg',
+            thankyou: true
 
-
-
+        },
         {
             id: 20,
             text1: 'Wie würdest Du Deine Deutsch-Kenntnisse in Wort und Schrift beurteilen? 🙂',
@@ -360,6 +374,40 @@ const UsingPhoneInput2 = () => {
                         <div className="flex justify-center items-center">
                             <img
                                 className="w-3/5"
+                                src={currentQuestion.img}
+                                alt="group-image"
+                            />
+                        </div>
+                    </div>
+                </ShineBorder>
+            )}
+            {currentQuestion?.thankyou && (
+                <ShineBorder
+                    className="mx-auto px-[10%] py-[2%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-xl text-center"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                    <div
+                        className={`inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
+                            }`}
+                    >
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
+                            {currentQuestion.title}
+                        </h1>
+
+                        <p>{currentQuestion.text1}</p>
+                        <p>{currentQuestion.text2}</p>
+                        <p>{currentQuestion.text3}</p>
+                        <p>{currentQuestion.text4}</p>
+                        <p>{currentQuestion.text5}</p>
+                        <p>{currentQuestion.text6}</p>
+                        <p>{currentQuestion.text7}</p>
+                        <p>{currentQuestion.text8}</p>
+                        <p>{currentQuestion.text9}</p>
+                        <p>{currentQuestion.text10}</p>
+
+                        <div className="flex justify-center items-center">
+                            <img
+                                className="w-1/2"
                                 src={currentQuestion.img}
                                 alt="group-image"
                             />

@@ -9,7 +9,7 @@ type UserDetails = {
     name: string;
     email: string;
     phone: string;
-    countryCode: string; 
+    countryCode: string;
 };
 
 const MyForm = () => {
@@ -75,9 +75,23 @@ const MyForm = () => {
             ],
             title: 'Fast geschafft: Letzte Frage!'
         },
+        {
+            id: 10,
+            title: 'Vielen Dank für Deine Bewerbung. Wir freuen uns darauf Dich kennenzulernen.',
+            text1: 'So geht es jetzt weiter:',
+            text2: 'Wir sehen uns Deine Bewerbung an und melden uns innerhalb der nächsten 48 Stunden telefonisch bei Dir.',
+            text3: 'Speicher Dir dafür gerne schon einmal die folgenden Nummern ein, denn unter einer der drei werden wir Dich kontaktieren:',
+            text4: '+49 151 51589830',
+            text5: '+49 151 25006663',
+            text6: '+49 160 96703175',
+            text7: 'Gemeinsam vereinbaren wir einen Termin für ein unverbindliches Kennenlerngespräch.',
+            text8: 'Beim Kennenlernen kannst uns alle Fragen stellen, die Du gerne beantwortet haben möchtest.',
+            text9: 'Deine Ansprechpartnerin:',
+            text10: 'Jasemin Bergmann',
+            img: 'https://i.ibb.co.com/6tTdq22/sm2x.jpg',
+            thankyou: true
 
-
-
+        },
         {
             id: 20,
             text1: 'Wie würdest Du Deine Deutsch-Kenntnisse in Wort und Schrift beurteilen? 🙂',
@@ -94,6 +108,7 @@ const MyForm = () => {
     const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
     const defaultUserDetails: UserDetails = {
         name: '',
@@ -153,33 +168,34 @@ const MyForm = () => {
     };
 
     const handleSubmit = () => {
+        // Form validation
         if (!userDetails.name || !userDetails.email || !userDetails.phone) {
             alert('Bitte füllen Sie alle Felder aus.');
             return;
         }
-
-        // Merging data
-        const formData = {
+    
+          // Merging data
+          const formData = {
             selectedOptions,
             selectedTime,
             userDetails,
             extractedQuestions,
         };
+    
+        console.log({ formData });
+         // Submission logic
+         console.log("Form Submitted!");
 
-        console.log(formData);
-        alert('Danke für Ihre Antworten!');
-
-        // Reset quiz
-        setCurrentQuestionId(1);
-        setSelectedOptions([]);
-        setSelectedTime(null);
-        setUserDetails(defaultUserDetails);
+         // Transition to thank-you screen
+         setIsSubmitted(true);
+         setCurrentQuestionId(10);
     };
+    
 
     const currentQuestion = questions.find((q) => q.id === currentQuestionId);
 
-    console.log(userDetails);
-    
+    console.log({ userDetails });
+
     return (
         <>
             {!selectedTime && (!currentQuestion?.image) && (
@@ -251,7 +267,7 @@ const MyForm = () => {
                 </ShineBorder>
             )}
 
-            {selectedTime && (
+            {selectedTime && !isSubmitted &&  (
                 <ShineBorder
                     className="mx-auto px-[13%] py-[8%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-2xl"
                     color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
@@ -345,6 +361,41 @@ const MyForm = () => {
                         <div className="flex justify-center items-center">
                             <img
                                 className="w-3/5"
+                                src={currentQuestion.img}
+                                alt="group-image"
+                            />
+                        </div>
+                    </div>
+                </ShineBorder>
+            )}
+
+            {currentQuestion?.thankyou && isSubmitted && (
+                <ShineBorder
+                    className="mx-auto px-[10%] py-[2%] bg-white overflow-hidden rounded-lg border bg-background md:shadow-xl text-center"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                    <div
+                        className={`w-[500px] inset-0 transition-all duration-700 ease-[cubic-bezier(0.25, 0.8, 0.25, 1)] ${isTransitioning ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'
+                            }`}
+                    >
+                        <h1 className="text-[#206396] md:text-2xl text-lg font-semibold mb-8">
+                            {currentQuestion.title}
+                        </h1>
+
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text1}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text2}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text3}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text4}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text5}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text6}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text7}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text8}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text9}</p>
+                        <p className="md:text-lg text-sm pb-2">{currentQuestion.text10}</p>
+
+                        <div className="flex justify-center items-center">
+                            <img
+                                className="w-1/2 mt-2"
                                 src={currentQuestion.img}
                                 alt="group-image"
                             />
